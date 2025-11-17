@@ -2,6 +2,7 @@
 @model BadNews.Models.News.FullArticleModel
 
 <script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="/js/signalr/dist/browser/signalr.js"></script>
 
 <main role="main" class="container">
     <div class="row">
@@ -54,5 +55,30 @@
             li.textContent = `${comment.user} говорит: ${comment.value}`;
             commentsDiv.appendChild(li);
         }
+    });
+
+    const connection = new signalR.HubConnectionBuilder().withUrl("/commentsHub").build();
+
+    document.getElementById("sendButton").disabled = true;
+
+    connection.on("ReceiveComment", function (user, message) {
+        const li = document.createElement("li");
+        document.getElementById("comments").appendChild(li);
+        li.textContent = `${user} говорит: ${message}`;
+    });
+
+    connection.start().then(function () {
+        document.getElementById("sendButton").disabled = false;
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    document.getElementById("sendButton").addEventListener("click", function (event) {
+        const user = document.getElementById("userInput").value;
+        const message = document.getElementById("commentInput").value;
+        connection.invoke("SendComment", user, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+        event.preventDefault();
     });
 </script>
