@@ -20,6 +20,15 @@
                 }
                 @Html.Raw(Model.Article.ContentHtml)
                 <div id="comments"></div>
+                <label>
+                    Пользователь <input id="userInput" />
+                </label>
+                <label>
+                    Комментарий <input id="commentInput" />
+                </label>
+                <div>
+                    <button id="sendButton">Отправить</button>
+                </div>
             </div>
         </div>
 
